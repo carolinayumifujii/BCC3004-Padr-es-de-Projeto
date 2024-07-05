@@ -9,13 +9,52 @@
  
 ## Singleton     
 O padrão de projeto SINGLETON garante à exitência de apenas uma instância de uma classe mantendo um ponto global de acesso ao seu objeto.
-Este padrão é útil quando uma classe precisa ter exatamente uma instância ativa em todo o sistema para controlar o acesso a um recurso compartilhado ou gerenciar estados globais.
+Este padrão é útil quando uma classe precisa ter exatamente uma instância ativa em todo o sistema para controlar o acesso a um recurso compartilhado ou gerenciar estados globais. Dessa forma então vamos imaginar um problema e uma solução para exemplificar o uso do singleton:
 
-Imagine que você está desenvolvendo um sistema que deve usar apenas uma instância de uma classe para:
-- Gerenciar uma configuração global. 
+## Problema
+Um aplicativo precisa carregar suas configurações de um arquivo JSON apenas uma vez e compartilhar essa configuração entre todos os componentes do sistema. Múltiplas instâncias de configuração podem resultar em inconsistência de dados e comportamento inesperado.
 
-Criar múltiplas instâncias de tais classes pode resultar em comportamento indesejado, desperdício de recursos ou inconsistência de dados.
+## Solução
+Usar o padrão Singleton para garantir que a configuração seja carregada uma única vez e compartilhada globalmente.
 
-- Solução
 
-O Singleton resolve isso garantindo que uma classe tenha apenas uma instância, fornecendo um ponto de acesso global a essa instância. Ele pode controlar a criação da instância e garantir que não sejam criadas outras instâncias.
+## Diagrama UML
+![Singleton UML](https://refactoring.guru/images/patterns/diagrams/singleton/structure-en.png) 
+
+
+## Código
+A classe `Config` carrega a configuração de um arquivo JSON na primeira vez que é instanciada. Todas as chamadas subsequentes usam a mesma instância de configuração.
+
+### Arquivo `config_singleton.py`
+
+```python
+# config_singleton.py
+import json
+
+class Config:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+            cls._instance._load_config()
+        return cls._instance
+
+    def _load_config(self):
+        try:
+            with open('config.json', 'r') as f:
+                self._config = json.load(f)
+        except FileNotFoundError:
+            self._config = {
+                "database": "MySQL",
+                "host": "localhost",
+                "port": 3306
+            }
+
+    def get_config(self):
+        return self._config
+
+    def update_config(self, key, value):
+        self._config[key] = value
+        with open('config.json', 'w') as f:
+            json.dump(self._config, f, indent=4)
