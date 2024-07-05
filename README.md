@@ -6,6 +6,7 @@
 
  fornecem mecanismos de criação de objetos que aumentam a flexibilidade e a reutilização de código.
  O padrão criacional mais cobrado em concursos publicos é o Singleton, também conhecido como: Carta única
- ### Singleton 
+ 
+ ## Singleton 
     O padrão de projeto SINGLETON
     garante à exitência de apenas uma instância de uma classe mantendo um ponto global de acesso ao seu objeto.
